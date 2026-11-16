@@ -1,0 +1,23 @@
+# Build output and dependencies
+dist/
+node_modules/
+package-lock.json
+yarn.lock
+
+# Bundled third-party files: models, binaries, license texts, voice data
+src/assets/
+src/voices/
+
+# Vendored Adobe CEP libraries, kept exactly as Adobe ships them
+src/js/lib/cep/csinterface.js
+src/js/lib/cep/csinterface.d.ts
+src/js/lib/cep/vulcan.js
+src/js/lib/cep/vulcan.d.ts
+src/js/lib/cep/cep_engine_extensions.js
+src/js/lib/cep/cep-types.d.ts
+
+# Prose is not reflowed
+*.md
+
+# Vendored ExtendScript JSON polyfill (Douglas Crockford, public domain), kept as shipped
+src/jsx/lib/json2.js

@@ -1,0 +1,77 @@
+@use "sass:color";
+@use "./variables.scss" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+:root {
+  // Read by Waveform.tsx's canvas drawing so it stays in sync with the
+  // SCSS tokens above without hardcoding colors twice.
+  --wf-signal: #{$signal};
+  --wf-faint: #{$text-faint};
+  --wf-cut-dim: #{rgba($bg-solid, 0.55)};
+  --wf-cut-hatch: #{$error};
+  --wf-hover: #{color.adjust($signal, $lightness: 8%)};
+  --wf-playhead: #{$text};
+  // A different hue from --wf-playhead (near-white), so a boundary drag handle
+  // and the playhead never blend together at a glance.
+  --wf-handle: #{$success};
+  // Low-confidence boundary marker: $error, not $warning (an alias of $signal's
+  // amber, which kept bars already use, so the marker would blend into every
+  // kept region).
+  --wf-low-confidence: #{$error};
+}
+
+body {
+  margin: 0;
+  background: $bg-solid;
+  color: $text;
+  font-family: $font-ui;
+  font-size: 12px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: $font-mono;
+}
+
+a {
+  color: $signal;
+}
+
+::selection {
+  background: $signal-wash;
+  color: $text;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $border-strong;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $text-faint;
+}

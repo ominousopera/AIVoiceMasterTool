@@ -1,0 +1,24 @@
+node_modules/
+dist/
+dist-ssr/
+release/
+*.local
+*.log
+.DS_Store
+.export-public
+*.zxp
+*.part
+
+# Large files fetched by scripts/fetch-assets.mjs (see scripts/assets-manifest.json)
+src/voices/*.bin
+src/assets/kokoro/onnx-community/Kokoro-82M-v1.0-ONNX/onnx/
+src/assets/kokoro/wasm/
+src/assets/whisper/
+src/assets/silero/
+src/assets/bin/
+src/assets/licenses/*.tar.gz
+src/assets/licenses/*.tar.xz
+
+# Temporary files from scripts
+scripts/.tmp-*
+preview/out/

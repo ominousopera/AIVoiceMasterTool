@@ -1,0 +1,49 @@
+// ============================================================
+// AI Voice Master Tool — design tokens
+//
+// Concept: "signal path" — the panel reads like an analog audio meter
+// bridge (VU meters, mixing-console faders) rather than a generic web
+// form, since the whole tool is about reading and shaping a voice signal.
+// Near-black charcoal surfaces (never pure #000 — Adobe panels sit a few
+// steps above black) with a single warm amber "signal" accent standing in
+// for meter needles/indicator LEDs. Numeric readouts (dB, %, counts) use a
+// tabular monospace so columns of stats line up like a real meter bank;
+// labels/prose use a humanist sans for warmth against all that precision.
+// ============================================================
+
+// Surfaces
+$bg-solid: #161617;
+$surface: #1d1d1f;
+$surface-raised: #232326;
+$border: #2e2e32;
+$border-strong: #3c3c41;
+
+// Text
+$text: #eae7e1;
+$text-muted: #98979c;
+$text-faint: #616166;
+
+// Signal accent (warm amber — the one saturated color in the system)
+$signal: #e0a339;
+$signal-dim: #8a6425;
+$signal-wash: rgba(224, 163, 57, 0.12);
+
+// Status
+$success: #6cbf9a;
+$warning: #e0a339;
+$error: #e2634f;
+
+// Type
+$font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+$font-mono: "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+
+// Spacing scale
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 24px;
+$space-6: 32px;
+
+// Motion
+$ease: cubic-bezier(0.2, 0.7, 0.3, 1);

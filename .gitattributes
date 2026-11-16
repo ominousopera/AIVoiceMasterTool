@@ -1,0 +1,19 @@
+# Text files are stored with LF line endings in the repository.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.ico binary
+*.wav binary
+*.mp3 binary
+*.onnx binary
+*.bin binary
+*.wasm binary
+*.exe binary
+*.dll binary
+*.zxp binary
+*.gz binary
+*.xz binary
+*.pdf binary
+*.epr binary
