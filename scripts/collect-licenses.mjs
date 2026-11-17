@@ -17,8 +17,15 @@ const out = path.join(ROOT, "src", "assets", "licenses", "NPM-PACKAGES.txt");
 
 // `npm ls` exits non-zero on any tree problem (an extraneous package, an
 // unmet optional one) while still printing the full JSON, so read its output
-// either way and only fail if there is none.
-const ls = spawnSync("npm", ["ls", "--omit=dev", "--all", "--json", "--long"], { cwd: ROOT, maxBuffer: 64 << 20, encoding: "utf8" });
+// either way and only fail if there is none. The project's own optional
+// dependencies are left out as well (npm ls applies --omit only at the top
+// level): jsxbin, the only one, is a build tool used only by the jsxbin build
+// and never ships.
+const ls = spawnSync("npm", ["ls", "--omit=dev", "--omit=optional", "--all", "--json", "--long"], {
+  cwd: ROOT,
+  maxBuffer: 64 << 20,
+  encoding: "utf8",
+});
 if (!ls.stdout) throw new Error(`npm ls produced no output: ${ls.stderr}`);
 if (ls.status !== 0) console.warn("npm ls reported dependency-tree problems (listed by `npm ls`); continuing with the tree it printed.");
 const tree = JSON.parse(ls.stdout);

@@ -26,8 +26,7 @@
   User guide:
   <a href="docs/USER-GUIDE.md">English</a> &middot;
   <a href="docs/USER-GUIDE.ru.md">Russian</a> &middot;
-  <a href="docs/USER-GUIDE.es.md">Spanish</a><br>
-  <a href="#install">Install</a> &middot; <a href="#known-limits">Known limits</a> &middot; <a href="docs/TROUBLESHOOTING.md">Troubleshooting</a></sub>
+  <a href="docs/USER-GUIDE.es.md">Spanish</a></sub>
 </p>
 
 <p align="center">
@@ -64,8 +63,9 @@ Everything runs on your computer, except the cloud features you turn on by enter
 ## Features
 
 <p align="center">
-  <img src="docs/images/silence-cut.png" alt="Silence Cut tab with a scanned clip and its waveform" width="380" align="top">
-  <img src="docs/images/pacing.png" alt="Pacing tab: J/L Pacing, Speed and Pitch" width="380" align="top">
+  <img src="docs/images/silence-cut.png" alt="Silence Cut tab with a scanned clip and its waveform" width="250" align="top">
+  <img src="docs/images/pacing.png" alt="Pacing tab: J/L Pacing, Speed and Pitch correction" width="250" align="top">
+  <img src="docs/images/ai-voice.png" alt="AI Voice tab: Kokoro with a voice picked and a line of text" width="250" align="top">
 </p>
 
 ### Silence Cut
@@ -83,10 +83,6 @@ Everything runs on your computer, except the cloud features you turn on by enter
 - **Render full timeline for AE** bakes Premiere effects, such as an EQ or a pitch effect you added by hand, into one audio file, so the effects reach After Effects. Pieces made by Natural don't need it.
 
 ### AI Voice
-
-<p align="center">
-  <img src="docs/images/ai-voice.png" alt="AI Voice tab with ElevenLabs settings" width="400">
-</p>
 
 - Kokoro is free and runs offline, with English (American and British), Spanish, French, Italian, Hindi and Brazilian Portuguese voices.
 - ElevenLabs works with your own account: the v2, v3 and v4 models, your own and stock voices, **Voice Changer** (same words, another voice) and **Batch** (one clip per line of text).
@@ -217,9 +213,7 @@ Special thanks to **Vladislav Baranov** for his ideas and hints on how to make t
 
 ## License
 
-AI Voice Master Tool is free software, licensed under the [GNU General Public License v3.0 or later](LICENSE). Copyright (C) 2026 Nikita Kolesov.
-
-It bundles third-party components under their own licenses: FFmpeg (LGPL-2.1+), eSpeak NG (GPL-3.0+), whisper.cpp (MIT), Silero VAD (MIT), Kokoro (Apache-2.0), ONNX Runtime Web (MIT), Transformers.js (Apache-2.0) and others. The full list and the license texts are in [src/assets/licenses/](src/assets/licenses/); the source archives of the bundled FFmpeg and eSpeak NG (with the Sonic library built into it) are inside every package and attached to the `third-party-v1` release. To run your own build of eSpeak NG, see [docs/REPLACING-ESPEAK-NG.md](docs/REPLACING-ESPEAK-NG.md).
+AI Voice Master Tool is licensed under GPL-3.0-or-later; see [`LICENSE`](LICENSE). Copyright (C) 2026 Nikita Kolesov. Third-party components are listed in [`NOTICE.md`](src/assets/licenses/NOTICE.md); the source archives of the bundled FFmpeg and eSpeak NG (with the Sonic library built into it) are inside every package and attached to the `third-party-v1` release. To run your own build of eSpeak NG, see [`docs/REPLACING-ESPEAK-NG.md`](docs/REPLACING-ESPEAK-NG.md).
 
 AI Voice Master Tool is an independent project, not affiliated with, sponsored by, or endorsed by Adobe, ElevenLabs, OpenAI or Anthropic.
 

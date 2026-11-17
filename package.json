@@ -63,7 +63,6 @@
     "core-js": "3",
     "cross-env": "^7.0.3",
     "fs-extra": "^10.0.0",
-    "jsxbin": "^2.3.0",
     "prettier": "3.6.2",
     "rimraf": "^3.0.2",
     "rollup": "^4.42.0",
@@ -80,6 +79,9 @@
   },
   "engines": {
     "node": ">=20.19"
+  },
+  "optionalDependencies": {
+    "jsxbin": "^2.3.0"
   },
   "repository": {
     "type": "git",
