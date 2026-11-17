@@ -334,12 +334,19 @@ step(
 );
 
 step(
-  "Spot-check: no direct network calls (fetch/XMLHttpRequest/WebSocket) in src/; ElevenLabs, OpenAI and Anthropic go through their official SDKs",
+  "Spot-check: no direct network calls (fetch/XMLHttpRequest/WebSocket) in src/ except the update notice's GET in updateCheck.ts; ElevenLabs, OpenAI and Anthropic go through their official SDKs",
   () => {
     try {
       const out = execFileSync(
         "grep",
-        ["-rn", "fetch(\\|XMLHttpRequest(\\|new WebSocket", path.join(ROOT, "src"), "--include=*.ts", "--include=*.tsx"],
+        [
+          "-rn",
+          "fetch(\\|XMLHttpRequest(\\|new WebSocket",
+          path.join(ROOT, "src"),
+          "--include=*.ts",
+          "--include=*.tsx",
+          "--exclude=updateCheck.ts",
+        ],
         { cwd: ROOT },
       ).toString();
       if (out.trim()) failures.push(`Direct network call(s) in src/ (the AI providers must go through their official SDKs):\n${out}`);

@@ -31,16 +31,20 @@ import {
   hasMacQuarantineNoticeBeenShown,
   hasOutputLocationBeenSet,
   hasUiLanguageBeenSet,
+  hasUpdateCheckBeenSet,
   loadAnthropicApiKey,
   loadAnthropicModelId,
   loadElevenLabsApiKey,
   loadElevenOutputFormat,
   loadFavoriteVoiceIds,
+  loadLastUpdateCheck,
+  loadLatestRelease,
   loadOpenAiApiKey,
   loadOpenAiModelId,
   loadOutputLocation,
   loadScriptIntensity,
   loadSkipExternalLinkConfirm,
+  loadUpdateCheck,
   OutputLocation,
   saveAnthropicApiKey,
   saveAnthropicModelId,
@@ -52,11 +56,24 @@ import {
   saveOutputLocation,
   saveScriptIntensity,
   saveSkipExternalLinkConfirm,
+  saveUpdateCheck,
+  saveUpdateCheckResult,
   toggleFavoriteVoiceId,
   UiLanguage,
 } from "../lib/settings";
 import { getLanguage, setLanguage, tr, useLanguage } from "../lib/i18n";
 import { readGenerationMetadata, GenerationMetadata } from "../lib/generationMetadata";
+import {
+  fetchLatestRelease,
+  isDue,
+  isNewer,
+  Release,
+  RELEASES_URL,
+  releasePageFor,
+  TIMEOUT_MS,
+  UpdateCheckError,
+  UpdateFailure,
+} from "../lib/updateCheck";
 // Value imports for elevenlabs.ts/scriptAssistant.ts are deliberately NOT
 // static — see each call site below (`await import("../lib/elevenlabs")` /
 // `await import("../lib/scriptAssistant")`). These two lib files are only
@@ -948,11 +965,33 @@ export const App = () => {
   const [effectsWarning, setEffectsWarning] = useState<{ action: string; effects: string[] } | null>(null);
   const effectsWarningResolve = useRef<((proceed: boolean) => void) | null>(null);
 
-  // Confirm-before-leaving-Premiere dialog for "Give Feedback" (opens an
-  // external site in the default browser) — skipped entirely once the user
-  // has ever checked "remember my choice" (loadSkipExternalLinkConfirm).
-  const [confirmLinkOpen, setConfirmLinkOpen] = useState(false);
+  // Confirm-before-leaving-Premiere dialog for "Give Feedback" and "Open the
+  // release page" (each opens an external site in the default browser),
+  // holding the address to open; skipped entirely once the user has ever
+  // checked "remember my choice" (loadSkipExternalLinkConfirm).
+  const [confirmLinkUrl, setConfirmLinkUrl] = useState<string | null>(null);
   const [rememberLinkChoice, setRememberLinkChoice] = useState(false);
+
+  // Update notice (updateCheck.ts), in the gear-icon settings popover.
+  // updateCheckOn mirrors the saved switch. knownUpdate is a newer release
+  // than this one, from this session's check or the last saved answer; it
+  // drives the dot on the gear icon and the release-page button.
+  // updateGeneration goes up when the switch is turned off, so an answer that
+  // arrives afterwards is dropped; updateInFlight holds the generation of
+  // the request under way, so clicks during a check make no second request.
+  const [updateCheckOn, setUpdateCheckOn] = useState(false);
+  const [knownUpdate, setKnownUpdate] = useState<Release | null>(null);
+  const [updateStatus, setUpdateStatus] = useState<
+    | { kind: "idle" }
+    | { kind: "checking" }
+    | { kind: "none" }
+    | { kind: "failed"; failure: UpdateFailure; status?: number; retryDue: boolean }
+  >({ kind: "idle" });
+  const [firstRunUpdatePromptOpen, setFirstRunUpdatePromptOpen] = useState(false);
+  const updateGeneration = useRef(0);
+  const updateInFlight = useRef<number | null>(null);
+  // The last failure's raw wording, for the Diagnostics report only.
+  const updateLastError = useRef<string | null>(null);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
@@ -982,6 +1021,7 @@ export const App = () => {
     setLanguage(language);
     setFirstRunLanguagePromptOpen(false);
     if (!hasOutputLocationBeenSet()) setFirstRunOutputPromptOpen(true);
+    else if (!hasUpdateCheckBeenSet()) setFirstRunUpdatePromptOpen(true);
   };
 
   // "License" modal (gear-icon settings popover) — read-only display of
@@ -1292,6 +1332,17 @@ export const App = () => {
     // the output-location check.
     if (!hasUiLanguageBeenSet()) setFirstRunLanguagePromptOpen(true);
     else if (!hasOutputLocationBeenSet()) setFirstRunOutputPromptOpen(true);
+    else if (!hasUpdateCheckBeenSet()) setFirstRunUpdatePromptOpen(true);
+    // Update notice: with the switch on, the last saved answer shows at once
+    // (no waiting for the network); a new check runs when the last good one is
+    // three days old or more. With the switch off, or before the user has
+    // answered, nothing is requested.
+    if (loadUpdateCheck()) {
+      setUpdateCheckOn(true);
+      const saved = loadLatestRelease();
+      if (saved && isNewer(saved.version, __APP_VERSION__)) setKnownUpdate({ version: saved.version, url: releasePageFor(saved.url) });
+      if (isDue(loadLastUpdateCheck(), Date.now())) void runUpdateCheck();
+    }
     // One-time note about ffmpegPath.ts's macOS quarantine-clear/re-sign of the
     // bundled binaries (see that file). hasMacQuarantineEventEverLogged returns
     // true only once prepareMacBinary has cleared a quarantine attribute or
@@ -1656,6 +1707,71 @@ export const App = () => {
   const handleFirstRunOutputChoice = (location: OutputLocation) => {
     handleOutputLocationChange(location);
     setFirstRunOutputPromptOpen(false);
+    if (!hasUpdateCheckBeenSet()) setFirstRunUpdatePromptOpen(true);
+  };
+
+  /** One request to GitHub (updateCheck.ts). A usable answer is saved with
+   *  its time; a failure saves nothing, so the next opening tries again. */
+  const runUpdateCheck = async (): Promise<void> => {
+    const generation = updateGeneration.current;
+    if (updateInFlight.current === generation) return;
+    updateInFlight.current = generation;
+    setUpdateStatus({ kind: "checking" });
+    try {
+      const release = await fetchLatestRelease();
+      if (generation !== updateGeneration.current) return;
+      saveUpdateCheckResult(release, Date.now());
+      const newer = isNewer(release.version, __APP_VERSION__);
+      setKnownUpdate(newer ? release : null);
+      setUpdateStatus(newer ? { kind: "idle" } : { kind: "none" });
+    } catch (e) {
+      if (generation !== updateGeneration.current) return;
+      const failure = e instanceof UpdateCheckError ? e : new UpdateCheckError(describeError(e), "answer");
+      updateLastError.current = `${failure.kind}: ${failure.message}`;
+      // The next opening checks again only while a check is due (no good
+      // answer within the interval), so the "try again" sentence follows that.
+      setUpdateStatus({
+        kind: "failed",
+        failure: failure.kind,
+        status: failure.status,
+        retryDue: isDue(loadLastUpdateCheck(), Date.now()),
+      });
+    } finally {
+      if (updateInFlight.current === generation) updateInFlight.current = null;
+    }
+  };
+
+  /** The settings switch and the one-time question. Turning it on checks at
+   *  once; turning it off drops any answer still on its way and hides the
+   *  notice. */
+  const handleUpdateCheckChange = (on: boolean) => {
+    saveUpdateCheck(on);
+    setUpdateCheckOn(on);
+    if (on) {
+      void runUpdateCheck();
+    } else {
+      updateGeneration.current++;
+      setKnownUpdate(null);
+      setUpdateStatus({ kind: "idle" });
+    }
+  };
+
+  const handleFirstRunUpdateChoice = (on: boolean) => {
+    setFirstRunUpdatePromptOpen(false);
+    handleUpdateCheckChange(on);
+  };
+
+  const updateFailureText = (failure: UpdateFailure, status?: number): string => {
+    if (failure === "offline") return tr("Could not check: no internet connection.");
+    if (failure === "limit")
+      return tr(
+        "Could not check: GitHub's limit of checks from this address is used up for now. The release page shows the newest version.",
+      );
+    if (failure === "timeout")
+      return tr("Could not check: GitHub did not answer within {seconds} seconds.", { seconds: TIMEOUT_MS / 1000 });
+    if (failure === "status") return tr("Could not check: GitHub answered with code {status}.", { status: status ?? "?" });
+    if (failure === "unreachable") return tr("Could not check: GitHub could not be reached.");
+    return tr("Could not check: GitHub's answer could not be read.");
   };
 
   /** Resolves the project's own folder for the "save next to project"
@@ -4063,6 +4179,16 @@ export const App = () => {
       }
       lines.push(`host: ${host}`, `system: ${system}`);
     }
+    {
+      const last = loadLastUpdateCheck();
+      lines.push(
+        `update notice: ${hasUpdateCheckBeenSet() ? (updateCheckOn ? "on" : "off") : "not asked yet"}; last good check: ${
+          last ? new Date(last).toISOString() : "never"
+        }; newer release known: ${knownUpdate ? knownUpdate.version : "none"}${
+          updateLastError.current ? `; last failure this session: ${updateLastError.current}` : ""
+        }`,
+      );
+    }
     lines.push("--- JS plugin state ---");
     if (scanResult) {
       lines.push(
@@ -4287,27 +4413,32 @@ export const App = () => {
     }
   };
 
-  const handleGiveFeedback = () => {
-    if (loadSkipExternalLinkConfirm()) {
-      openFeedbackLink();
-      return;
-    }
-    setRememberLinkChoice(false);
-    setConfirmLinkOpen(true);
-  };
-
-  const openFeedbackLink = () => {
+  const openInBrowser = (url: string) => {
     try {
-      window.cep.util.openURLInDefaultBrowser(FEEDBACK_URL);
+      window.cep.util.openURLInDefaultBrowser(url);
     } catch (e) {
       // best effort — nothing else to fall back to here
     }
   };
 
+  /** Opens `url` in the default browser, after the confirm dialog unless the
+   *  user chose "Remember my choice" before. */
+  const openExternalLink = (url: string) => {
+    if (loadSkipExternalLinkConfirm()) {
+      openInBrowser(url);
+      return;
+    }
+    setRememberLinkChoice(false);
+    setConfirmLinkUrl(url);
+  };
+
+  const handleGiveFeedback = () => openExternalLink(FEEDBACK_URL);
+
   const handleConfirmOpenLink = () => {
     if (rememberLinkChoice) saveSkipExternalLinkConfirm(true);
-    setConfirmLinkOpen(false);
-    openFeedbackLink();
+    const url = confirmLinkUrl;
+    setConfirmLinkUrl(null);
+    if (url) openInBrowser(url);
   };
 
   const handleSavePreset = () => {
@@ -4361,7 +4492,11 @@ export const App = () => {
         <div className="header-right">
           {clipInfo && <div className="clip-badge">{clipInfo.clipName}</div>}
           <div className="settings-menu" ref={settingsRef}>
-            <button className="icon-btn" aria-label={tr("Diagnostics & feedback")} onClick={() => setSettingsOpen((o) => !o)}>
+            <button
+              className={knownUpdate ? "icon-btn has-update" : "icon-btn"}
+              aria-label={knownUpdate ? tr("Diagnostics & feedback (a new version is out)") : tr("Diagnostics & feedback")}
+              onClick={() => setSettingsOpen((o) => !o)}
+            >
               <GearIcon />
             </button>
             {settingsOpen && (
@@ -4400,6 +4535,43 @@ export const App = () => {
                 <p className="hint">
                   {tr(
                     '"Next to project" saves beside your .prproj file instead of Documents, and survives "Clear all data" below (which never touches the project folder).',
+                  )}
+                </p>
+
+                <div className="divider" />
+
+                <label>{tr("Updates")}</label>
+                <label className="row">
+                  <input type="checkbox" checked={updateCheckOn} onChange={(e) => handleUpdateCheckChange(e.target.checked)} />
+                  {tr("Tell me when a new version is out")}
+                </label>
+                <button onClick={() => void runUpdateCheck()} disabled={updateStatus.kind === "checking"}>
+                  {updateStatus.kind === "checking" ? tr("Checking…") : tr("Check now")}
+                </button>
+                {knownUpdate && updateStatus.kind !== "checking" && (
+                  <div className="banner success">
+                    {tr("Version {latest} is out (you have {version}).", { latest: knownUpdate.version, version: __APP_VERSION__ })}
+                  </div>
+                )}
+                {updateStatus.kind === "none" && (
+                  <div className="banner success">
+                    {tr("No newer release found. Installed version: {version}.", { version: __APP_VERSION__ })}
+                  </div>
+                )}
+                {updateStatus.kind === "failed" && (
+                  <div className="banner warning">
+                    {updateFailureText(updateStatus.failure, updateStatus.status)}
+                    {updateCheckOn && updateStatus.retryDue && " " + tr("It will try again the next time the plugin opens.")}
+                  </div>
+                )}
+                {(knownUpdate || (updateStatus.kind === "failed" && updateStatus.failure === "limit")) && (
+                  <button onClick={() => openExternalLink(knownUpdate ? knownUpdate.url : RELEASES_URL)}>
+                    {tr("Open the release page")}
+                  </button>
+                )}
+                <p className="hint">
+                  {tr(
+                    "Check now asks GitHub once for the newest version number. With the switch on, the plugin also asks when it opens, every three days at most. Nothing about you or your projects is sent, and nothing is downloaded: install an update yourself from the release page.",
                   )}
                 </p>
 
@@ -5991,6 +6163,24 @@ export const App = () => {
         </div>
       )}
 
+      {firstRunUpdatePromptOpen && (
+        <div className="modal-overlay" role="presentation">
+          <div className="modal-card" role="dialog" aria-modal="true">
+            <h2>{tr("Tell you about new versions?")}</h2>
+            <p>
+              {tr(
+                "The plugin can ask GitHub every three days whether a newer version is out, and put a dot on the gear icon when one is. Nothing about you or your projects is sent, and nothing is downloaded or installed: you install updates yourself from the release page. Silence Cut, Pacing and Kokoro work offline either way.",
+              )}
+            </p>
+            <div className="engine-picker">
+              <button onClick={() => handleFirstRunUpdateChoice(true)}>{tr("Yes, tell me")}</button>
+              <button onClick={() => handleFirstRunUpdateChoice(false)}>{tr("No, don't check")}</button>
+            </div>
+            <p className="hint">{tr("You can change this anytime from the gear icon, and check by hand there with Check now.")}</p>
+          </div>
+        </div>
+      )}
+
       {effectsWarning && (
         <div className="modal-overlay" role="presentation" onClick={() => closeEffectsWarning(false)}>
           <div className="modal-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
@@ -6044,19 +6234,19 @@ export const App = () => {
         </div>
       )}
 
-      {confirmLinkOpen && (
-        <div className="modal-overlay" role="presentation" onClick={() => setConfirmLinkOpen(false)}>
+      {confirmLinkUrl && (
+        <div className="modal-overlay" role="presentation" onClick={() => setConfirmLinkUrl(null)}>
           <div className="modal-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <h2>{tr("Open link in your browser?")}</h2>
             <p>
-              {tr("This opens")} <code>{FEEDBACK_URL}</code> {tr("in your default browser, outside of Premiere.")}
+              {tr("This opens")} <code>{confirmLinkUrl}</code> {tr("in your default browser, outside of Premiere.")}
             </p>
             <label className="row">
               <input type="checkbox" checked={rememberLinkChoice} onChange={(e) => setRememberLinkChoice(e.target.checked)} />
               {tr("Remember my choice")}
             </label>
             <div className="modal-actions">
-              <button onClick={() => setConfirmLinkOpen(false)}>{tr("Cancel")}</button>
+              <button onClick={() => setConfirmLinkUrl(null)}>{tr("Cancel")}</button>
               <button className="primary" onClick={handleConfirmOpenLink}>
                 {tr("Open")}
               </button>

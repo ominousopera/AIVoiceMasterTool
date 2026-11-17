@@ -144,6 +144,12 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
+    heading: "Updates",
+    paragraphs: [
+      "The plugin asks once whether to tell you about new versions. If you say yes, it asks GitHub for the newest release number when it opens, at most every three days, and puts a dot on the gear icon when a newer version is out. Gear icon > Updates has the switch, Check now (one check, also with the switch off) and, when a newer version is out, Open the release page. Nothing about you or your projects is sent, and the plugin never downloads or installs anything: download the new package from the release page and install it the same way as the first one.",
+    ],
+  },
+  {
     heading: "Problems and bug reports",
     paragraphs: [
       "Gear icon > Run Diagnostics saves a plain-text report to Documents/AI Voice Master Tool/Diagnostics/. It contains no API keys, and your home folder is shortened to ~, but it lists clip, sequence and file names: read it before you share it.",

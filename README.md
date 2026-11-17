@@ -58,7 +58,7 @@ A typical pass: Scan, check the preview, Cut, Make J/L Cut, set the Speed, fix t
 | A different voice | Find another speaker | Voice Changer (ElevenLabs) |
 | Finish in After Effects | Rebuild the cut layer by layer | Send to After Effects, as layers |
 
-Everything runs on your computer, except the cloud features you turn on by entering your own key. The plugin never changes your source files.
+Everything runs on your computer, except the cloud features you turn on by entering your own key and, if you turn it on, the update notice. The plugin never changes your source files.
 
 ## Features
 
@@ -113,6 +113,8 @@ You need Premiere Pro 2025 or later (on a Mac, macOS 13 Ventura or later), and A
 
 The packages are signed, so a normal install needs no `PlayerDebugMode` and nothing typed in Terminal. If the plugin does not appear, or Scan fails on a managed Mac, see [Troubleshooting](docs/TROUBLESHOOTING.md).
 
+To update, install the new package the same way and restart; your keys, settings and presets stay. If the installer says the plugin is already installed, remove it in the installer first.
+
 To remove it, first click the gear icon → **Clear all data**. That deletes your saved API keys, your settings and the plugin's files in `Documents/AI Voice Master Tool` (files saved next to a project stay). Then delete the `com.aivoicemastertool.pro` folder from the CEP extensions folder your installer used (usually `~/Library/Application Support/Adobe/CEP/extensions` on macOS, `%APPDATA%\Adobe\CEP\extensions` on Windows) and restart.
 
 What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
@@ -120,13 +122,13 @@ What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 <details>
 <summary><b>Privacy and security</b></summary>
 
-Everything runs on your computer except the optional cloud features of the AI Voice tab, and those work only after you enter your own key:
+Everything runs on your computer except the optional update notice (below) and the optional cloud features of the AI Voice tab, which work only after you enter your own key:
 
 - ElevenLabs text-to-speech and Improve for voice send your text.
 - Voice Changer uploads the selected clip's audio to ElevenLabs.
 - With a key saved, the plugin loads your voice list from ElevenLabs, and the list of models from OpenAI or Anthropic (the provider selected for Improve for voice), each time it opens.
 
-Calls go straight from your computer to that provider. There is no telemetry, analytics or update check. The code enforces this: the plugin refuses every other web request ([`networkGuard.ts`](src/js/lib/networkGuard.ts)), loads no Node.js networking module and opens no debugging ports, and the bundled FFmpeg is built without network support. Report a vulnerability privately through the repository's Security tab; see [`SECURITY.md`](SECURITY.md).
+Calls go straight from your computer to that provider. There is no telemetry or analytics. The update notice is off until you turn it on (the plugin asks once): it asks GitHub for the newest release number when the plugin opens, every three days at most, and sends nothing about you or your projects (GitHub sees only what any web request shows, such as your IP address). It never downloads anything; you install updates yourself from the release page. The code enforces this: the plugin refuses every other web request ([`networkGuard.ts`](src/js/lib/networkGuard.ts)), loads no Node.js networking module and opens no debugging ports, and the bundled FFmpeg is built without network support. Report a vulnerability privately through the repository's Security tab; see [`SECURITY.md`](SECURITY.md).
 </details>
 
 ## Known limits

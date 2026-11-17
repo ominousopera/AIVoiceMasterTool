@@ -244,5 +244,7 @@ plugin calls that provider's API directly from the user's own machine
 using that key (never a key of this plugin's own, never proxied/resold —
 see `src/js/lib/elevenlabs.ts` and `src/js/lib/scriptAssistant.ts`). Every
 other feature, including the AI Voice tab's Kokoro path, stays fully
-offline. This plugin performs no telemetry and no automatic update
-checks of its own.
+offline, except the optional update notice (off until the user turns it
+on), which asks GitHub for this project's newest release number and
+downloads nothing (see `src/js/lib/updateCheck.ts`). This plugin performs
+no telemetry.

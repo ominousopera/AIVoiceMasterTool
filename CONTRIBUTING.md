@@ -17,6 +17,7 @@ npx tsc -p tsconfig-build.json --noEmit
 npm run format:check
 node scripts/check-i18n.mjs
 node scripts/check-api-requests.mjs
+node scripts/check-update-check.mjs
 ```
 
 CI runs the same checks.

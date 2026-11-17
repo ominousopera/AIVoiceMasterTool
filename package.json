@@ -1,7 +1,7 @@
 {
   "name": "com.aivoicemastertool.pro",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adobe Premiere Pro / After Effects plugin: silence cutting, J/L pacing, speed and pitch, Send to After Effects, and AI voice-over.",
   "author": "Nikita Kolesov",
   "license": "GPL-3.0-or-later",
@@ -28,8 +28,8 @@
     }
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0",
-    "@elevenlabs/elevenlabs-js": "^2.77.0",
+    "@anthropic-ai/sdk": "^1.9.0",
+    "@elevenlabs/elevenlabs-js": "^2.79.0",
     "@huggingface/transformers": "3.8.1",
     "onnxruntime-web": "1.18.0",
     "openai": "^6.49.0",

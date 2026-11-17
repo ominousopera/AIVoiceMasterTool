@@ -5,6 +5,7 @@ import { ScriptIntensity } from "./scriptAssistant";
 // the @elevenlabs SDK and main.tsx deliberately lazy-loads it (see main.tsx's
 // own comment on this) rather than bundling it into the panel's initial load.
 import type { ElevenLabsOutputFormat } from "./elevenlabs";
+import type { Release } from "./updateCheck";
 
 // Same on-disk convention as presets.ts: a plain JSON file in this app's own
 // settings folder (see dataFile.ts for how read errors are handled). No OS
@@ -81,8 +82,9 @@ interface Settings {
    *  voice doesn't require opening the dropdown every time. */
   favoriteVoiceIds?: { elevenlabs?: string[]; kokoro?: string[] };
   /** "Remember my choice" from the confirm-before-leaving-Premiere dialog
-   *  shown by "Give Feedback" (see main.tsx's confirmLinkOpen) — once true,
-   *  that button opens the browser directly without asking again. */
+   *  shown by "Give Feedback" and "Open the release page" (see main.tsx's
+   *  openExternalLink): once true, both open the browser directly without
+   *  asking again. */
   skipExternalLinkConfirm?: boolean;
   /**
    * Has the one-time session-log notice about ffmpegPath.ts's macOS
@@ -92,6 +94,17 @@ interface Settings {
    * uiLanguage above): it is simply true once the notice has been shown.
    */
   macQuarantineNoticeShown?: boolean;
+  /** Update notice (updateCheck.ts): true = check GitHub when the plugin opens
+   *  (at most every three days), false = only when asked. Absent = the user
+   *  hasn't answered the one-time question yet. */
+  updateCheck?: boolean;
+  /** When the last check that got a usable answer finished (ms since 1970).
+   *  Failed checks don't set it, so a check that was due stays due and runs
+   *  again at the next opening. */
+  lastUpdateCheck?: number;
+  /** The newest release that check found, shown at the next opening before
+   *  any new request. */
+  latestRelease?: Release;
 }
 
 const STRING_FIELDS = [
@@ -105,7 +118,8 @@ const STRING_FIELDS = [
   "outputLocation",
   "uiLanguage",
 ];
-const BOOLEAN_FIELDS = ["skipExternalLinkConfirm", "macQuarantineNoticeShown"];
+const BOOLEAN_FIELDS = ["skipExternalLinkConfirm", "macQuarantineNoticeShown", "updateCheck"];
+const NUMBER_FIELDS = ["lastUpdateCheck"];
 
 /** A field of the wrong type (a damaged or hand-edited file) is left out, as
  *  if it had never been set, so one bad value can't break the code that
@@ -118,6 +132,15 @@ const withValidFields = (raw: Record<string, unknown>): Settings => {
   }
   for (const field of BOOLEAN_FIELDS) {
     if (field in out && typeof out[field] !== "boolean") delete out[field];
+  }
+  for (const field of NUMBER_FIELDS) {
+    if (field in out && (typeof out[field] !== "number" || !Number.isFinite(out[field]))) delete out[field];
+  }
+  if ("latestRelease" in out) {
+    const release = out.latestRelease as { version?: unknown; url?: unknown } | null;
+    if (!release || typeof release !== "object" || typeof release.version !== "string" || typeof release.url !== "string")
+      delete out.latestRelease;
+    else out.latestRelease = { version: release.version, url: release.url };
   }
   if ("favoriteVoiceIds" in out) {
     const favorites = out.favoriteVoiceIds;
@@ -283,5 +306,29 @@ export const hasMacQuarantineNoticeBeenShown = (): boolean => {
 export const saveMacQuarantineNoticeShown = (): void => {
   updateSettings((settings) => {
     settings.macQuarantineNoticeShown = true;
+  });
+};
+
+/** True only when the user turned the update notice on. */
+export const loadUpdateCheck = (): boolean => readSettings().updateCheck === true;
+
+/** Gates the one-time update question, like hasUiLanguageBeenSet. */
+export const hasUpdateCheckBeenSet = (): boolean => isSetOrUnreadable("updateCheck");
+
+export const saveUpdateCheck = (on: boolean): void => {
+  updateSettings((settings) => {
+    settings.updateCheck = on;
+  });
+};
+
+export const loadLastUpdateCheck = (): number | undefined => readSettings().lastUpdateCheck;
+
+export const loadLatestRelease = (): Release | undefined => readSettings().latestRelease;
+
+/** Saves a usable answer and when it came, in one write. */
+export const saveUpdateCheckResult = (release: Release, checkedAt: number): void => {
+  updateSettings((settings) => {
+    settings.latestRelease = { version: release.version, url: release.url };
+    settings.lastUpdateCheck = checkedAt;
   });
 };

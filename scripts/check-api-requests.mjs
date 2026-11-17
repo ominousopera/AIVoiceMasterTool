@@ -73,6 +73,7 @@ globalThis.fetch = async (url, init) => {
     return json({
       object: "list",
       data: [
+        { id: "gpt-live-1", created: 301, object: "model" },
         { id: "gpt-5.6-sol", created: 300, object: "model" },
         { id: "gpt-5.3-codex-mini", created: 299, object: "model" },
         { id: "gpt-5.5-pro", created: 298, object: "model" },
@@ -142,13 +143,13 @@ const assistant = await bundle("src/js/lib/scriptAssistant.ts");
 const models = await assistant.listOpenAiModels("sk-test");
 const ids = models.map((m) => m.id);
 check(
-  "OpenAI list drops realtime and deep-research models",
-  !ids.includes("gpt-realtime-mini") && !ids.includes("o3-deep-research"),
+  "OpenAI list drops realtime, live and deep-research models",
+  !ids.includes("gpt-realtime-mini") && !ids.includes("gpt-live-1") && !ids.includes("o3-deep-research"),
   ids.join(", "),
 );
 const picked = assistant.pickDefaultModel(models, "openai");
 check("OpenAI default pick is the cheap general model", picked === "gpt-5.6-luna", picked);
-check("OpenAI empty-list fallback", assistant.pickDefaultModel([], "openai") === "gpt-4o-mini");
+check("OpenAI empty-list fallback", assistant.pickDefaultModel([], "openai") === "gpt-6-luna");
 for (const [id, wantTemp] of [
   ["gpt-5.6-luna", false],
   ["gpt-5.3-codex-mini", false],

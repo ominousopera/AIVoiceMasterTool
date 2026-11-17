@@ -86,7 +86,7 @@ Then it runs its checks:
 - no Node.js networking module in the built plugin, and the network guard present;
 - that each package holds its own binaries and none of the other platform's;
 - no Cyrillic text in the source outside the Russian dictionary;
-- no direct network calls in the source (the AI providers are called through their official SDKs);
+- no direct network calls in the source except the update notice's request in `src/js/lib/updateCheck.ts` (the AI providers are called through their official SDKs);
 - no source maps in the packages;
 - that each package's signature verifies and carries a timestamp.
 
@@ -108,6 +108,7 @@ The check then confirms that both packages carry that certificate (it reads the 
 - `npm run format:check`: Prettier formatting (`npm run format` fixes it).
 - `node scripts/check-i18n.mjs`: every interface string has a Russian and a Spanish translation.
 - `node scripts/check-api-requests.mjs`: the exact requests sent to OpenAI, Anthropic and ElevenLabs, checked against a fake network, so no keys are needed.
+- `node scripts/check-update-check.mjs`: the update notice's request to GitHub and how it reads the answer, against a fake network.
 - `node scripts/fetch-assets.mjs --check`: the large files are present and unmodified.
 - `node scripts/check-extendscript.mjs` (after `npm run build`): the built ExtendScript parses as ES3, has no unescaped `/` in a regex literal and is ASCII only (the build writes every other character as a `\u` escape); `scripts/release.mjs` runs the same check on the packages.
 

@@ -1252,4 +1252,32 @@ export const es: Record<string, string> = {
     "Los clips seleccionados tienen velocidades distintas ({speeds}%) — escribe un valor manualmente arriba, o usa Natural (corrige cada fragmento a su propia velocidad).",
   "Pitch Shifter couldn't be put back on every rebuilt piece:":
     "No se pudo volver a poner Pitch Shifter en todos los fragmentos reconstruidos:",
+  // Update notice (updateCheck.ts).
+  "Could not check: no internet connection.": "No se pudo comprobar: no hay conexión a internet.",
+  "Could not check: GitHub's limit of checks from this address is used up for now. The release page shows the newest version.":
+    "No se pudo comprobar: por ahora se agotó el límite de consultas a GitHub desde esta dirección. La página de la versión muestra la más reciente.",
+  "Could not check: GitHub did not answer within {seconds} seconds.": "No se pudo comprobar: GitHub no respondió en {seconds} segundos.",
+  "Could not check: GitHub answered with code {status}.": "No se pudo comprobar: GitHub respondió con el código {status}.",
+  "Could not check: GitHub could not be reached.": "No se pudo comprobar: no se pudo conectar con GitHub.",
+  "Could not check: GitHub's answer could not be read.": "No se pudo comprobar: no se pudo leer la respuesta de GitHub.",
+  "Diagnostics & feedback (a new version is out)": "Diagnóstico y comentarios (hay una versión nueva)",
+  "Updates": "Actualizaciones",
+  "Tell me when a new version is out": "Avisarme cuando salga una versión nueva",
+  "Checking…": "Comprobando…",
+  "Check now": "Comprobar ahora",
+  "Version {latest} is out (you have {version}).": "Ya está la versión {latest} (tienes la {version}).",
+  "No newer release found. Installed version: {version}.": "No hay una versión más reciente. Versión instalada: {version}.",
+  "It will try again the next time the plugin opens.": "Se volverá a intentar la próxima vez que se abra el plugin.",
+  "Open the release page": "Abrir la página de la versión",
+  "Check now asks GitHub once for the newest version number. With the switch on, the plugin also asks when it opens, every three days at most. Nothing about you or your projects is sent, and nothing is downloaded: install an update yourself from the release page.":
+    "«Comprobar ahora» consulta a GitHub una sola vez el número de la versión más reciente. Con la casilla activada, el plugin también consulta al abrirse, como mucho cada tres días. No se envía nada sobre ti ni sobre tus proyectos, y no se descarga nada: instala la actualización tú mismo desde la página de la versión.",
+  "Tell you about new versions?": "¿Avisarte de versiones nuevas?",
+  "The plugin can ask GitHub every three days whether a newer version is out, and put a dot on the gear icon when one is. Nothing about you or your projects is sent, and nothing is downloaded or installed: you install updates yourself from the release page. Silence Cut, Pacing and Kokoro work offline either way.":
+    "El plugin puede consultar a GitHub cada tres días si hay una versión nueva y poner un punto en el icono del engranaje cuando la haya. No se envía nada sobre ti ni sobre tus proyectos, y no se descarga ni se instala nada: las actualizaciones las instalas tú desde la página de la versión. Corte de silencios, Ritmo y Kokoro funcionan sin internet en cualquier caso.",
+  "Yes, tell me": "Sí, avísame",
+  "No, don't check": "No, no comprobar",
+  "You can change this anytime from the gear icon, and check by hand there with Check now.":
+    "Puedes cambiarlo cuando quieras desde el icono del engranaje y comprobar a mano allí con «Comprobar ahora».",
+  "The plugin asks once whether to tell you about new versions. If you say yes, it asks GitHub for the newest release number when it opens, at most every three days, and puts a dot on the gear icon when a newer version is out. Gear icon > Updates has the switch, Check now (one check, also with the switch off) and, when a newer version is out, Open the release page. Nothing about you or your projects is sent, and the plugin never downloads or installs anything: download the new package from the release page and install it the same way as the first one.":
+    "El plugin pregunta una vez si quieres que te avise de versiones nuevas. Si respondes que sí, al abrirse consulta a GitHub el número de la versión más reciente, como mucho cada tres días, y pone un punto en el icono del engranaje cuando hay una versión más nueva. Icono del engranaje > «Actualizaciones» tiene la casilla, «Comprobar ahora» (una sola comprobación, también con la casilla desactivada) y, cuando hay una versión más nueva, «Abrir la página de la versión». No se envía nada sobre ti ni sobre tus proyectos, y el plugin nunca descarga ni instala nada: descarga el paquete nuevo desde la página de la versión e instálalo igual que el primero.",
 };

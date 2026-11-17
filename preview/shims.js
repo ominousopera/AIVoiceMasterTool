@@ -15,6 +15,9 @@
  *   &key=1               an ElevenLabs key is saved (voices fail to load:
  *                        there is no network in the harness)
  *   &firstrun=1          no saved settings (first-run prompts appear)
+ *   &update=new          update notice on, a newer release (9.9.9) saved
+ *                        from an earlier check (dot, notice, release page)
+ *   &update=check        update notice on and due: checks GitHub for real
  *   &sent=1              (bridge panel) a sent cut is waiting
  */
 (function () {
@@ -25,11 +28,17 @@
   var firstRun = params.get("firstrun") === "1";
   var hasKey = params.get("key") === "1";
   var hasSent = params.get("sent") === "1"; // bridge: a cut is waiting
+  var update = params.get("update");
 
   // ---------- in-memory fs ----------
   var files = Object.create(null);
   if (!firstRun) {
-    var settings = { uiLanguage: lang, outputLocation: "documents", macQuarantineNoticeShown: true };
+    var settings = { uiLanguage: lang, outputLocation: "documents", macQuarantineNoticeShown: true, updateCheck: false };
+    if (update === "new" || update === "check") settings.updateCheck = true;
+    if (update === "new") {
+      settings.lastUpdateCheck = Date.now();
+      settings.latestRelease = { version: "9.9.9", url: "https://github.com/ominousopera/AIVoiceMasterTool/releases/tag/v9.9.9" };
+    }
     if (hasKey) settings.elevenLabsApiKey = "sk_preview_0000000000000000";
     files["/Users/preview/Library/Application Support/AI Voice Master Tool/settings.json"] = JSON.stringify(settings);
   }

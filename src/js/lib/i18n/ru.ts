@@ -1250,4 +1250,32 @@ export const ru: Record<string, string> = {
   "Selected clips have different speeds ({speeds}%) — type one manually above, or use Natural instead (it corrects each piece at its own speed).":
     "У выбранных клипов разная скорость ({speeds}%) — введите значение вручную выше или используйте «Естественно» (он корректирует каждый кусок по его собственной скорости).",
   "Pitch Shifter couldn't be put back on every rebuilt piece:": "Pitch Shifter не удалось вернуть на все пересобранные куски:",
+  // Update notice (updateCheck.ts).
+  "Could not check: no internet connection.": "Не удалось проверить: нет подключения к интернету.",
+  "Could not check: GitHub's limit of checks from this address is used up for now. The release page shows the newest version.":
+    "Не удалось проверить: лимит проверок GitHub с этого адреса пока исчерпан. На странице релиза видна самая новая версия.",
+  "Could not check: GitHub did not answer within {seconds} seconds.": "Не удалось проверить: GitHub не ответил за {seconds} секунд.",
+  "Could not check: GitHub answered with code {status}.": "Не удалось проверить: GitHub ответил кодом {status}.",
+  "Could not check: GitHub could not be reached.": "Не удалось проверить: не получилось связаться с GitHub.",
+  "Could not check: GitHub's answer could not be read.": "Не удалось проверить: ответ GitHub не читается.",
+  "Diagnostics & feedback (a new version is out)": "Диагностика и обратная связь (вышла новая версия)",
+  "Updates": "Обновления",
+  "Tell me when a new version is out": "Сообщать о новой версии",
+  "Checking…": "Проверяю…",
+  "Check now": "Проверить сейчас",
+  "Version {latest} is out (you have {version}).": "Вышла версия {latest} (у вас {version}).",
+  "No newer release found. Installed version: {version}.": "Более новой версии нет. Установлена версия {version}.",
+  "It will try again the next time the plugin opens.": "Плагин попробует снова при следующем открытии.",
+  "Open the release page": "Открыть страницу релиза",
+  "Check now asks GitHub once for the newest version number. With the switch on, the plugin also asks when it opens, every three days at most. Nothing about you or your projects is sent, and nothing is downloaded: install an update yourself from the release page.":
+    "«Проверить сейчас» один раз спрашивает у GitHub номер самой новой версии. Если галочка включена, плагин спрашивает и сам при открытии, не чаще раза в три дня. Ничего о вас и ваших проектах не отправляется, и ничего не скачивается: обновление вы ставите сами со страницы релиза.",
+  "Tell you about new versions?": "Сообщать о новых версиях?",
+  "The plugin can ask GitHub every three days whether a newer version is out, and put a dot on the gear icon when one is. Nothing about you or your projects is sent, and nothing is downloaded or installed: you install updates yourself from the release page. Silence Cut, Pacing and Kokoro work offline either way.":
+    "Плагин может раз в три дня спрашивать у GitHub, не вышла ли новая версия, и ставить точку на значке шестерёнки, когда она есть. Ничего о вас и ваших проектах не отправляется, ничего не скачивается и не устанавливается: обновления вы ставите сами со страницы релиза. «Вырезка тишины», «Темп» и Kokoro в любом случае работают без интернета.",
+  "Yes, tell me": "Да, сообщать",
+  "No, don't check": "Нет, не проверять",
+  "You can change this anytime from the gear icon, and check by hand there with Check now.":
+    "Это можно изменить в любой момент через значок шестерёнки; там же можно проверить вручную кнопкой «Проверить сейчас».",
+  "The plugin asks once whether to tell you about new versions. If you say yes, it asks GitHub for the newest release number when it opens, at most every three days, and puts a dot on the gear icon when a newer version is out. Gear icon > Updates has the switch, Check now (one check, also with the switch off) and, when a newer version is out, Open the release page. Nothing about you or your projects is sent, and the plugin never downloads or installs anything: download the new package from the release page and install it the same way as the first one.":
+    "Плагин один раз спрашивает, сообщать ли о новых версиях. Если ответить «да», при открытии он спрашивает у GitHub номер самой новой версии, не чаще раза в три дня, и ставит точку на значке шестерёнки, когда вышла более новая версия. В меню шестерёнки, в разделе «Обновления», есть галочка, кнопка «Проверить сейчас» (одна проверка, работает и при выключенной галочке) и, когда вышла новая версия, «Открыть страницу релиза». Ничего о вас и ваших проектах не отправляется, и плагин ничего не скачивает и не устанавливает: скачайте новый пакет со страницы релиза и установите его так же, как первый.",
 };

@@ -134,6 +134,10 @@ Un archivo de audio hecho con «Renderizar toda la línea de tiempo para AE» no
 
 Los propios botones Deshacer y Revertir del plugin (Deshacer del corte, Restaurar fragmentos, Revertir del tono natural, Deshacer de Voz IA) funcionan con lo que el plugin recuerda de la última operación. Un nuevo análisis borra Deshacer del corte y Revertir del tono natural, y conserva Restaurar fragmentos. Un nuevo corte borra Revertir del tono natural y Restaurar fragmentos, y su propio Deshacer sustituye al del corte anterior. Ninguno de los dos afecta a Deshacer de Voz IA. Volver a abrir el plugin o reiniciar Premiere los borra todos, y los botones desaparecen. El propio Cmd/Ctrl+Z de Premiere funciona siempre, un paso a la vez.
 
+## Actualizaciones
+
+El plugin pregunta una vez si quieres que te avise de versiones nuevas. Si respondes que sí, al abrirse consulta a GitHub el número de la versión más reciente, como mucho cada tres días, y pone un punto en el icono del engranaje cuando hay una versión más nueva. Icono del engranaje > «Actualizaciones» tiene la casilla, «Comprobar ahora» (una sola comprobación, también con la casilla desactivada) y, cuando hay una versión más nueva, «Abrir la página de la versión». No se envía nada sobre ti ni sobre tus proyectos, y el plugin nunca descarga ni instala nada: descarga el paquete nuevo desde la página de la versión e instálalo igual que el primero.
+
 ## Problemas e informes de errores
 
 Icono del engranaje > «Ejecutar diagnóstico» guarda un informe de texto en Documentos/AI Voice Master Tool/Diagnostics/. No contiene claves de API y tu carpeta personal aparece abreviada como ~, pero incluye nombres de clips, secuencias y archivos: léelo antes de compartirlo.

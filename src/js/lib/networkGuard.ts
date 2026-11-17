@@ -6,10 +6,12 @@
 // Why: the panels are meant to work without the internet. The only
 // connections the product makes on purpose are the optional cloud paths of
 // the AI Voice tab — ElevenLabs, OpenAI, Anthropic — and only with the user's
-// own key. Bundled libraries know other addresses (Transformers.js defaults
-// to downloading models from Hugging Face and its WebAssembly from a CDN;
-// this code configures both to local files), and a future update of any of
-// them could add one more. The guard turns "configured not to" into "cannot".
+// own key, and the optional update notice (updateCheck.ts), which asks
+// GitHub for the newest release number. Bundled libraries know other
+// addresses (Transformers.js defaults to downloading models from Hugging Face
+// and its WebAssembly from a CDN; this code configures both to local files),
+// and a future update of any of them could add one more. The guard turns
+// "configured not to" into "cannot".
 //
 // Local files are unaffected: file:, blob: and data: URLs, and bare paths,
 // never reach the network. Development builds also allow localhost, for
@@ -103,3 +105,9 @@ export const installNetworkGuard = (allowedHosts: string[]): void => {
 /** Hosts of the AI Voice tab's optional cloud providers, used with the user's
  *  own keys (the SDKs' default endpoints). */
 export const AI_PROVIDER_HOSTS = ["api.elevenlabs.io", "api.openai.com", "api.anthropic.com"];
+
+/** Hosts of the optional update notice (updateCheck.ts), which reads only
+ *  this project's newest release number from them (the guard checks hosts,
+ *  not paths). raw.githubusercontent.com is asked only when api.github.com
+ *  refuses for its request limit. */
+export const UPDATE_CHECK_HOSTS = ["api.github.com", "raw.githubusercontent.com"];

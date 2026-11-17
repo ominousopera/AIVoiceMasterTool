@@ -57,7 +57,7 @@ export const LICENSE_SECTIONS: LicenseSection[] = [
   {
     heading: "Network use and your own API keys",
     paragraphs: [
-      "The Software does not collect telemetry or usage analytics, and does not perform automatic update checks over the network.",
+      "The Software does not collect telemetry or usage analytics. Apart from the AI Voice paths below, its only network request is the optional update notice, off until you turn it on: it asks GitHub for the newest release number of this project (api.github.com, or raw.githubusercontent.com when GitHub's request limit is reached), sends nothing about you or your projects, and never downloads or installs anything.",
       "The AI Voice tab's Kokoro path runs entirely locally and never sends data anywhere. Its ElevenLabs, OpenAI, and Anthropic paths are optional: they only activate if you supply your own API key for that provider, and calls are made directly from your machine to that provider's own servers using your key — never proxied through, or resold by, this project. Your use of any such provider is governed by that provider's own terms of service and privacy policy, not by this license.",
     ],
   },

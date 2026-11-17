@@ -40,7 +40,8 @@ The CEP panels run in Adobe's embedded Chromium with Node.js enabled, so they ca
 - `src/js/lib/kokoro.ts`, `espeakPhonemize.ts`: offline text-to-speech.
 - `src/js/lib/elevenlabs.ts`, `scriptAssistant.ts`: the ElevenLabs, OpenAI and Anthropic clients, which use the official SDKs and the user's own keys.
 - `src/js/lib/i18n/`: `tr()`, the Russian and Spanish dictionaries, and `hostMessages.ts`, which translates messages coming back from ExtendScript.
-- `src/js/lib/networkGuard.ts`: refuses every network request except HTTPS to the AI providers' API hosts (none for the After Effects CEP panel). Both CEP panels install it in their `index-react.tsx` before the React app starts.
+- `src/js/lib/networkGuard.ts`: refuses every network request except HTTPS to the AI providers' API hosts and to `api.github.com` and `raw.githubusercontent.com` for the update notice (none for the After Effects CEP panel). Both CEP panels install it in their `index-react.tsx` before the React app starts.
+- `src/js/lib/updateCheck.ts`: the optional update notice. It reads the newest release number from GitHub's API (from the repository's `package.json` when the API's request limit is reached), compares it with the installed version and gives the release page to open; it never downloads anything.
 - `src/js/lib/settings.ts`: the settings file, `~/Library/Application Support/AI Voice Master Tool/settings.json` on macOS and `%APPDATA%\AI Voice Master Tool\settings.json` on Windows.
 - `src/jsx/ppro/ppro.ts`: everything that edits the Premiere timeline.
 - `src/jsx/aeft/aeft.ts`: placing a cut in an After Effects composition.

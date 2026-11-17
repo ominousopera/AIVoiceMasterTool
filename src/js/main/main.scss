@@ -150,6 +150,22 @@
       color: $signal;
       border-color: $border-strong;
     }
+
+    // A newer release is known (update notice): a small dot, top right.
+    &.has-update {
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: $signal;
+      }
+    }
   }
 }
 
@@ -165,6 +181,10 @@
   padding: $space-3;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
   animation: rise 0.14s $ease;
+  // In a short docked panel the menu scrolls inside itself instead of running
+  // past the panel's bottom edge (30px: its top offset, plus a small margin).
+  max-height: calc(var(--real-height, 100vh) - 38px);
+  overflow-y: auto;
 
   // `.divider`'s default $space-5 (24px each side) is tuned for separating
   // different features of a tab; this popover is a compact menu of equally
@@ -202,6 +222,12 @@
   > label {
     margin-top: $space-2;
     text-align: center;
+  }
+
+  // The Updates switch: a checkbox row, read left to right like a sentence.
+  > label.row {
+    text-align: left;
+    margin-bottom: $space-2;
   }
 }
 

@@ -136,6 +136,10 @@ An audio file made by "Render full timeline for AE" has no spare material past i
 
 The plugin's own Undo and Revert buttons (Cut's Undo, Revert to segments, Natural pitch's Revert, AI Voice's Undo) work from what the plugin remembers about the last operation. A new Scan clears Cut's Undo and Natural pitch's Revert and keeps Revert to segments. A new Cut clears Natural pitch's Revert and Revert to segments, and its own Undo replaces the previous Cut's. Neither touches AI Voice's Undo. Reopening the plugin or restarting Premiere clears all of them, and the buttons go away. Premiere's own Cmd/Ctrl+Z always works, one step at a time.
 
+## Updates
+
+The plugin asks once whether to tell you about new versions. If you say yes, it asks GitHub for the newest release number when it opens, at most every three days, and puts a dot on the gear icon when a newer version is out. Gear icon > Updates has the switch, Check now (one check, also with the switch off) and, when a newer version is out, Open the release page. Nothing about you or your projects is sent, and the plugin never downloads or installs anything: download the new package from the release page and install it the same way as the first one.
+
 ## Problems and bug reports
 
 Gear icon > Run Diagnostics saves a plain-text report to Documents/AI Voice Master Tool/Diagnostics/. It contains no API keys, and your home folder is shortened to ~, but it lists clip, sequence and file names: read it before you share it.

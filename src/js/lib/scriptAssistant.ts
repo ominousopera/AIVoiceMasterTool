@@ -250,7 +250,7 @@ export interface ModelOption {
 // last-resort fallback if the live model-list fetch fails (network error,
 // stale key); normally the panel lists the providers' current models, since
 // a hardcoded ID goes stale within months.
-const OPENAI_FALLBACK_MODEL_ID = "gpt-4o-mini";
+const OPENAI_FALLBACK_MODEL_ID = "gpt-6-luna";
 const ANTHROPIC_FALLBACK_MODEL_ID = "claude-haiku-5-5";
 
 /** True for an OpenAI model id that's actually a text-generation-capable
@@ -272,6 +272,10 @@ const isOpenAiChatModel = (id: string): boolean => {
       // would be picked as the default by pickDefaultModel below.
       if (lower.indexOf("audio") !== -1) return false;
       if (lower.indexOf("realtime") !== -1) return false;
+      // gpt-live-* are voice-conversation models (OpenAI lists them with the
+      // Realtime models); the Responses API that improveWithOpenAi calls
+      // doesn't serve them.
+      if (lower.indexOf("gpt-live") === 0) return false;
       if (lower.indexOf("image") !== -1) return false;
       if (lower.indexOf("transcribe") !== -1) return false;
       if (lower.indexOf("tts") !== -1) return false;

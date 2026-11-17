@@ -4,7 +4,7 @@ import { initBolt } from "../lib/utils/bolt";
 import "../index.scss";
 import { App } from "./main";
 import { logDiagnosticStep } from "../lib/kokoro";
-import { AI_PROVIDER_HOSTS, installNetworkGuard } from "../lib/networkGuard";
+import { AI_PROVIDER_HOSTS, installNetworkGuard, UPDATE_CHECK_HOSTS } from "../lib/networkGuard";
 
 // This entry's compiled output (`main-<hash>.cjs`) is loaded once by a classic
 // `<script>` tag in main/index.html, which doesn't go through Node's
@@ -24,9 +24,10 @@ if (!w.__appEntryRan) {
   logDiagnosticStep("index-react.tsx: first execution in this window — running initBolt + createRoot().render()");
 
   try {
-    // Only the AI Voice tab's cloud providers, with the user's own keys, may
-    // be reached over the network — see networkGuard.ts.
-    installNetworkGuard(AI_PROVIDER_HOSTS);
+    // Only the AI Voice tab's cloud providers, with the user's own keys, and
+    // GitHub (api.github.com, raw.githubusercontent.com) for the optional
+    // update notice may be reached over the network — see networkGuard.ts.
+    installNetworkGuard([...AI_PROVIDER_HOSTS, ...UPDATE_CHECK_HOSTS]);
     initBolt();
 
     ReactDOM.createRoot(document.getElementById("app") as HTMLElement).render(

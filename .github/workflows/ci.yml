@@ -26,3 +26,5 @@ jobs:
         run: node scripts/check-i18n.mjs
       - name: API requests (fake network, no keys)
         run: node scripts/check-api-requests.mjs
+      - name: Update notice (fake network)
+        run: node scripts/check-update-check.mjs
