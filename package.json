@@ -30,7 +30,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
     "@elevenlabs/elevenlabs-js": "^2.77.0",
-    "@huggingface/transformers": "3.8.1",
+    "@huggingface/transformers": "4.3.2",
     "onnxruntime-web": "1.18.0",
     "openai": "^6.49.0",
     "react": "^19.3.1",
